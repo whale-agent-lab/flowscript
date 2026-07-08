@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "{{SKILL_CLASS_NAME}}Input",
+  "description": "{{Describe the input object.}}",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Primary input source. TODO: replace with the target skill's exact business meaning."
+    },
+    "options": {
+      "type": "object",
+      "description": "Optional execution settings. TODO: define allowed properties and tighten this schema.",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "required": ["source"]
+}

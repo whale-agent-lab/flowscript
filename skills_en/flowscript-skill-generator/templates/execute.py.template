@@ -1,0 +1,44 @@
+"""Run the target skill's deterministic main step. TODO: replace the placeholder logic."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+from typing import Any
+
+
+def read_object(path: Path) -> dict[str, Any]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Parameters must be a JSON object.")
+    return data
+
+
+def write_json(path: Path, data: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run the skill's main step.")
+    parser.add_argument("--input", required=True, type=Path, help="Path to normalized parameter JSON.")
+    parser.add_argument("--output", required=True, type=Path, help="Path to the result artifact.")
+    parser.add_argument("--status-output", required=True, type=Path, help="Path to execution status JSON.")
+    args = parser.parse_args()
+    try:
+        params = read_object(args.input)
+        # TODO: implement deterministic business logic and replace this placeholder result.
+        result = {"summary": "Placeholder execution completed; implement the target skill logic.", "input": params}
+        write_json(args.output, result)
+        status = {"state": "success", "message": "Execution completed.", "warnings": ["The business logic is still a placeholder."]}
+        write_json(args.status_output, status)
+        return 0
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        status = {"state": "recoverable_error", "message": f"Execution failed: {exc}", "warnings": []}
+        write_json(args.status_output, status)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,6 @@
+{"name":"默认最近一个月按员工聚类","input":{"employees":["张伟","李娜","王强"],"regions":["华东","华南"],"group_by":"employee","record_count":500},"expected_state":"success","description":"验证默认时间、模拟生成、按员工聚类和报告生成。"}
+{"name":"自定义时间按区域聚类","input":{"employees":["张伟","李娜"],"regions":["华东","华南","华北"],"group_by":"region","time_range":{"start_date":"2026-01-01","end_date":"2026-03-31"},"record_count":800,"seed":7},"expected_state":"success","description":"验证自定义时间闭区间和按区域聚类。"}
+{"name":"缺少员工","input":{"regions":["华东"],"group_by":"region"},"expected_state":"needs_input","description":"验证员工为必填信息。"}
+{"name":"缺少区域","input":{"employees":["张伟"],"group_by":"employee"},"expected_state":"needs_input","description":"验证区域为必填信息。"}
+{"name":"时间范围不完整","input":{"employees":["张伟"],"regions":["华东"],"group_by":"employee","time_range":{"start_date":"2026-01-01"}},"expected_state":"needs_input","description":"验证自定义时间必须同时给出开始和结束日期。"}
+{"name":"时间范围倒置","input":{"employees":["张伟"],"regions":["华东"],"group_by":"employee","time_range":{"start_date":"2026-03-01","end_date":"2026-01-01"}},"expected_state":"invalid","description":"验证时间范围顺序。"}

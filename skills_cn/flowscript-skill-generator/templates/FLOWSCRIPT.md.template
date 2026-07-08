@@ -1,0 +1,107 @@
+# FlowScript：{{技能中文名称}}
+
+## 目的
+
+{{用中文说明该受控流程的目标和边界。}}
+
+## 普通 agent 阅读规则
+
+按 `flow` 块顺序执行，只采用已声明条件。脚本命令、参数、模型工具、输出 Schema 和路径均以 DSL 为准。
+
+```flow
+version: 1
+mode: controlled
+inputs:
+  schema: input_schema.json
+steps:
+  - id: parse_request
+    type: llm
+    input_mode: skill_inputs
+    prompt:
+      zh: prompts/parse_request_cn.md
+      en: prompts/parse_request_en.md
+    tool:
+      name: submit_skill_inputs
+      description:
+        zh: 提交目标技能的结构化输入
+        en: Submit structured inputs for the target skill
+    input:
+      request: ${user.request}
+    output:
+      params:
+        path: runs/{run_id}/resolved_params.json
+        schema: input_schema.json
+    next: validate_params
+
+  - id: validate_params
+    type: validator
+    command:
+      executable: python
+      args:
+        - scripts/validate.py
+        - --input
+        - ${input.params}
+        - --output
+        - ${output.status}
+        - --normalized-output
+        - ${output.params}
+      accepted_exit_codes: [0, 1, 2]
+      status_source: ${output.status}
+      timeout_seconds: 30
+    input:
+      params: ${parse_request.output.params}
+    output:
+      status: runs/{run_id}/artifacts/validation_status.json
+      params:
+        path: runs/{run_id}/valid_params.json
+        required: false
+    branches:
+      valid:
+        when: ${validate_params.output.status.state} == "valid"
+        next: execute_main
+      needs_input:
+        when: ${validate_params.output.status.state} == "needs_input"
+        next: request_clarification
+      invalid:
+        when: ${validate_params.output.status.state} == "invalid"
+        next: execution_stopped
+
+  - id: execute_main
+    type: script
+    command:
+      executable: python
+      args:
+        - scripts/execute.py
+        - --input
+        - ${input.params}
+        - --output
+        - ${output.result}
+        - --status-output
+        - ${output.status}
+      accepted_exit_codes: [0, 1]
+      status_source: ${output.status}
+      timeout_seconds: 60
+    input:
+      params: ${validate_params.output.params}
+    output:
+      result: runs/{run_id}/artifacts/final_artifact.json
+      status: runs/{run_id}/artifacts/execution_status.json
+    branches:
+      success:
+        when: ${execute_main.output.status.state} == "success"
+        next: end
+      recoverable_error:
+        when: ${execute_main.output.status.state} == "recoverable_error"
+        next: execution_stopped
+      fatal_error:
+        when: ${execute_main.output.status.state} == "fatal_error"
+        next: execution_stopped
+
+  - id: request_clarification
+    type: terminal
+    reason: needs_input
+
+  - id: execution_stopped
+    type: terminal
+    reason: execution_failed
+```

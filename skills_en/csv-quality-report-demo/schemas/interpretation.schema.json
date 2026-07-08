@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CsvProfileInterpretation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "summary": {"type": "string", "minLength": 1, "description": "English summary of the synthetic data-quality and grouping analysis."},
+    "risks": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Data-quality risks observed in the profile."},
+    "recommendations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Data-governance recommendations corresponding to the risks."},
+    "cluster_insights": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Grouping observations by employee or region."}
+  },
+  "required": ["summary", "risks", "recommendations", "cluster_insights"]
+}

@@ -1,0 +1,8 @@
+# Input Parsing
+
+Use the user request and `input_schema.json` to call `submit_skill_inputs`.
+
+- Submit only values explicitly provided by the user or safely defaulted by the schema.
+- Do not invent business values that require confirmation.
+- Encode arrays and objects as valid JSON.
+- Call the tool only; do not return prose or Markdown.

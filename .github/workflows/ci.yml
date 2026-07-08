@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: minimal_flowscript_agent/pyproject.toml
+
+      - name: Install runtime
+        run: python -m pip install -e minimal_flowscript_agent
+
+      - name: Compile Python sources
+        run: python -m compileall -q minimal_flowscript_agent/minimize_agent
+
+      - name: Validate plans, structured files, and documentation
+        run: |
+          python - <<'PY'
+          import ast
+          import json
+          import pathlib
+          import re
+
+          from minimize_agent.flow_loader import load_flow, validate_plan
+
+          root = pathlib.Path.cwd()
+          skill_roots = [
+              root / "skills_cn" / "csv-quality-report-demo",
+              root / "skills_en" / "csv-quality-report-demo",
+          ]
+
+          for skill_root in skill_roots:
+              validate_plan(load_flow(skill_root), skill_root)
+
+          for path in root.rglob("*.py"):
+              if "runs" not in path.parts:
+                  ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+
+          for path in root.rglob("*.json"):
+              if "runs" not in path.parts:
+                  json.loads(path.read_text(encoding="utf-8-sig"))
+
+          for path in root.rglob("*.jsonl"):
+              if "runs" not in path.parts:
+                  for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                      if line.strip():
+                          try:
+                              json.loads(line)
+                          except json.JSONDecodeError as exc:
+                              raise AssertionError(f"{path}:{line_number}: {exc}") from exc
+
+          for name in ("README.md", "README_cn.md", "CONTRIBUTING.md", "SECURITY.md"):
+              path = root / name
+              text = path.read_text(encoding="utf-8")
+              assert text.count("```") % 2 == 0, f"Unbalanced code fences in {name}"
+              links = re.findall(r"\[[^]]+\]\(([^)]+)\)", text)
+              missing = [
+                  link
+                  for link in links
+                  if not link.startswith(("http://", "https://", "#"))
+                  and not (path.parent / link).exists()
+              ]
+              assert not missing, f"Missing local links in {name}: {missing}"
+
+          license_text = (root / "LICENSE").read_text(encoding="utf-8")
+          assert "Apache License" in license_text[:200]
+          assert "Version 2.0, January 2004" in license_text[:200]
+          print("Repository validation passed")
+          PY

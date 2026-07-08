@@ -1,0 +1,4 @@
+interface:
+  display_name: "FlowScript Skill Generator"
+  short_description: "Generate controlled, dual-mode FlowScript skill packages"
+  default_prompt: "Use $flowscript-skill-generator to create a FlowScript skill package for this workflow."

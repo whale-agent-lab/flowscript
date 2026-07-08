@@ -1,0 +1,38 @@
+---
+name: {{SKILL_NAME}}
+description: {{Describe what the skill does and the situations that should trigger it.}}
+---
+
+# {{SKILL_DISPLAY_NAME}}
+
+{{Briefly describe the skill's goal.}}
+
+## Inputs
+
+- `{{INPUT_NAME}}`: {{Describe the input, whether it is required, and its default when applicable.}}
+
+Treat `input_schema.json` as the source of truth. When a field requires user confirmation, read `missing_fields` from the validation status before asking a concise question.
+
+## Ordinary Agent Mode
+
+1. Resolve the request against `input_schema.json` and write `runs/{run_id}/resolved_params.json`.
+2. Run `scripts/validate.py` and continue only when the state is `valid`.
+3. Run `scripts/execute.py` with normalized parameters and consume declared artifacts instead of relying on stdout.
+4. Deliver the result only after required artifacts exist and execution state is `success`.
+5. On failure, read `fallback_context.json` and its referenced logs, then continue from the latest valid artifact.
+
+## FlowScript Mode
+
+When the runtime supports FlowScript, use `FLOWSCRIPT.md` as the executable profile. Do not duplicate or rewrite the full DSL here.
+
+## Outputs
+
+- `runs/{run_id}/artifacts/final_artifact.json`: {{Describe the primary result.}}
+- `runs/{run_id}/artifacts/execution_status.json`: Structured execution status.
+
+## Constraints
+
+- Do not skip input validation.
+- Do not deliver a final result before required artifacts exist.
+- Do not call scripts outside the skill directory unless the user explicitly allows it.
+- Mark unknown business rules with `TODO` instead of inventing them.

@@ -1,0 +1,3 @@
+{"name":"有效输入","input":{"source":"示例来源","options":{}},"expected_state":"success","description":"验证标准成功路径。"}
+{"name":"缺少必填字段","input":{"options":{}},"expected_state":"needs_input","description":"验证中文澄清路径。"}
+{"name":"输入类型无效","input":[],"expected_state":"invalid","description":"验证无效输入路径。"}

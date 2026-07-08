@@ -1,0 +1,8 @@
+# 输入解析
+
+根据用户请求和 `input_schema.json` 调用 `submit_skill_inputs`。
+
+- 只提交用户明确提供或 Schema 允许默认的字段。
+- 不编造需要用户确认的业务值。
+- 数组和对象必须使用合法 JSON。
+- 只调用工具，不输出解释或 Markdown。

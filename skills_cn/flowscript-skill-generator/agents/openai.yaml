@@ -1,0 +1,4 @@
+interface:
+  display_name: "FlowScript 技能生成器"
+  short_description: "生成完整中文可读、可校验并支持受控执行的双模式技能包"
+  default_prompt: "使用 $flowscript-skill-generator 为这个任务创建一个中文版 FlowScript 双模式技能包。"

@@ -1,0 +1,3 @@
+{"name":"valid input","input":{"source":"example source","options":{}},"expected_state":"success","description":"Covers the standard success path."}
+{"name":"missing required field","input":{"options":{}},"expected_state":"needs_input","description":"Covers the clarification path."}
+{"name":"invalid input type","input":[],"expected_state":"invalid","description":"Covers the invalid-input path."}

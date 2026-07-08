@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "{{SKILL_CLASS_NAME}}Input",
+  "description": "{{用中文说明输入对象。}}",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "主要输入来源。TODO：替换为目标技能的准确业务含义。"
+    },
+    "options": {
+      "type": "object",
+      "description": "可选执行参数。TODO：明确允许的属性后收紧约束。",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "required": ["source"]
+}

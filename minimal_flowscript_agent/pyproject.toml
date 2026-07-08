@@ -1,0 +1,13 @@
+[project]
+name = "minimize-agent"
+version = "0.1.0"
+description = "Minimal FlowScript workflow runtime and Skill Agent context renderer"
+requires-python = ">=3.11"
+dependencies = ["PyYAML>=6.0"]
+
+[project.scripts]
+minimize-agent = "minimize_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["minimize_agent*"]

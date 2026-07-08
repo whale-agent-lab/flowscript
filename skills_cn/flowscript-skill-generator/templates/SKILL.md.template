@@ -1,0 +1,38 @@
+---
+name: {{SKILL_NAME}}
+description: {{用中文说明该技能做什么，以及用户在什么情况下应使用它。}}
+---
+
+# {{技能中文名称}}
+
+{{用中文简述技能目标。}}
+
+## 输入
+
+- `{{INPUT_NAME}}`：{{中文说明；标明是否必填和默认值。}}
+
+输入规则以 `input_schema.json` 为准。缺少需要用户确认的字段时，先读取验证状态中的 `missing_fields`，再提出简短中文问题。
+
+## 普通 agent 模式
+
+1. 根据 `input_schema.json` 将用户请求解析到 `runs/{run_id}/resolved_params.json`。
+2. 运行 `scripts/validate.py`，只在状态为 `valid` 时继续。
+3. 使用规范化参数运行 `scripts/execute.py`，读取声明的 artifact，而不是依赖 stdout。
+4. 在所需 artifact 存在且状态为 `success` 后交付结果。
+5. 失败时优先读取 `fallback_context.json` 和其中列出的日志，从最近有效 artifact 继续。
+
+## FlowScript 模式
+
+运行时支持 FlowScript 时，将 `FLOWSCRIPT.md` 作为可执行配置。不要在此文件复制或改写完整 DSL。
+
+## 输出
+
+- `runs/{run_id}/artifacts/final_artifact.json`：{{最终产物的中文说明。}}
+- `runs/{run_id}/artifacts/execution_status.json`：结构化执行状态。
+
+## 约束
+
+- 不跳过输入验证。
+- 不在必需 artifact 生成前提交最终结果。
+- 不调用技能目录外的脚本，除非用户明确允许。
+- 对尚未确定的业务规则保留中文 `TODO`，不要编造。

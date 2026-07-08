@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CsvProfileInterpretation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "summary": {"type": "string", "minLength": 1, "description": "模拟数据质量与聚类分析的中文摘要。"},
+    "risks": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "从画像中观察到的数据质量风险。"},
+    "recommendations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "对应风险的数据治理建议。"},
+    "cluster_insights": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "员工或区域维度的聚类观察。"}
+  },
+  "required": ["summary", "risks", "recommendations", "cluster_insights"]
+}

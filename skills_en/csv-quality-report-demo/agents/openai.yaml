@@ -1,0 +1,4 @@
+interface:
+  display_name: "Employee and Region Data Quality Demo"
+  short_description: "Generate, filter, group, and assess synthetic employee-region data"
+  default_prompt: "Use $csv-quality-report-demo to generate synthetic data from my employees and regions, then filter and analyze its quality using the requested grouping dimension."
